@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TTS Panel</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header>
+    <h1>TTS Panel</h1>
+    <nav id="tabs">
+      <button data-tab="status" class="active">Status</button>
+      <button data-tab="generate">Generate</button>
+      <button data-tab="voices">Voices</button>
+      <button data-tab="clone">Clone</button>
+      <button data-tab="history">History</button>
+      <button data-tab="config">Config</button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- Outside the tabs on purpose: it applies to all of them. -->
+    <div id="environment-warning" class="warning" hidden></div>
+    <section id="tab-status">
+      <div class="card">
+        <div class="row">
+          <span><b class="light" id="light-engine"></b> Engine <span id="label-engine">—</span></span>
+          <button id="btn-engine">Start</button>
+        </div>
+        <p class="detail" id="detail-engine">off</p>
+      </div>
+
+      <div class="card">
+        <div class="row">
+          <span><b class="light" id="light-discord"></b> Discord <span id="label-discord">—</span></span>
+          <button id="btn-discord">Connect</button>
+        </div>
+        <p class="detail" id="detail-discord">—</p>
+      </div>
+
+      <h2>Log</h2>
+      <pre id="log"></pre>
+    </section>
+
+    <section id="tab-generate" hidden>
+      <p class="detail">Needs the engine on; doesn't need Discord. The audio goes
+         to <code>outputs/</code>.</p>
+      <div class="card">
+        <label>Voice
+          <select id="generate-voice"></select>
+        </label>
+        <label>Text
+          <textarea id="generate-text" rows="4"
+                    placeholder="What the voice should say"></textarea>
+        </label>
+        <div class="row">
+          <span class="detail" id="generate-note">—</span>
+          <button id="btn-generate">Generate</button>
+        </div>
+      </div>
+      <div class="card" id="generate-output" hidden>
+        <audio id="generate-player" controls></audio>
+        <p class="detail" id="generate-detail">—</p>
+        <div class="row">
+          <span>
+            <a id="download-wav" download>Download .wav</a>
+            ·
+            <a id="download-ogg" download>Download .ogg</a>
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <section id="tab-clone" hidden>
+      <p class="detail">Four steps. The new voice waits in a separate folder and
+         only goes into <code>voices/</code> after you listen to it and approve.</p>
+
+      <div class="card">
+        <h2>1. The audio</h2>
+        <p class="detail">15 to 30 seconds of clean speech. You can drag the file here.</p>
+        <div id="drop" class="drop">
+          <input type="file" id="clone-file" accept="audio/*">
+        </div>
+        <label class="inline">
+          <input type="checkbox" id="clone-trim"> cut long silences
+        </label>
+        <div class="row">
+          <span class="detail" id="clone-upload">no file yet</span>
+          <button id="btn-prepare" disabled>Prepare</button>
+        </div>
+      </div>
+
+      <div class="card" id="clone-step-prep" hidden>
+        <h2>2. The diagnosis</h2>
+        <p class="detail">Read it before spending time on a bad sample.</p>
+        <pre id="clone-log"></pre>
+      </div>
+
+      <div class="card" id="clone-step-name" hidden>
+        <h2>3. The name</h2>
+        <label>Voice name
+          <input type="text" id="clone-name" placeholder="alice">
+        </label>
+        <div class="row">
+          <span class="detail" id="clone-note">—</span>
+          <button id="btn-import">Import and listen</button>
+        </div>
+      </div>
+
+      <div class="card" id="clone-step-test" hidden>
+        <h2>4. Save or discard</h2>
+        <audio id="clone-player" controls></audio>
+        <p class="detail" id="clone-detail">—</p>
+        <div class="row">
+          <span class="detail" id="clone-exists"></span>
+          <span>
+            <button id="btn-discard" class="secondary">Discard</button>
+            <button id="btn-save">Save</button>
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <section id="tab-voices" hidden>
+      <p class="detail">A hidden voice disappears from <code>/say</code> and from the
+         autocomplete on Discord. The file stays on disk.</p>
+      <ul id="voice-list"></ul>
+    </section>
+
+    <section id="tab-history" hidden>
+      <nav id="periods">
+        <button data-period="today">Today</button>
+        <button data-period="week">7 days</button>
+        <button data-period="month">30 days</button>
+        <button data-period="all" class="active">All time</button>
+      </nav>
+      <p id="history-summary" class="detail">—</p>
+      <div class="columns">
+        <div><h2>Top users</h2><ol id="rank-users"></ol></div>
+        <div><h2>Top voices</h2><ol id="rank-voices"></ol></div>
+      </div>
+      <h2>Latest utterances</h2>
+      <table id="utterance-table"><tbody></tbody></table>
+    </section>
+
+    <section id="tab-config" hidden>
+      <p class="detail">The <code>.env</code> keys you can change from here. The bot's
+         (Discord) apply after restarting the engine. The <code>DISCORD_TOKEN</code> and <code>HF_TOKEN</code>
+         lines don't show up here because the panel doesn't know they exist —
+         it only reads and rewrites the keys on this list. A
+         <code>.env.bak</code> is written before every change.</p>
+      <div class="card">
+        <div id="config-fields"></div>
+        <div class="row">
+          <span class="detail" id="config-note">—</span>
+          <span>
+            <button id="btn-restart" class="secondary" hidden>Restart the engine</button>
+            <button id="btn-config">Save</button>
+          </span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

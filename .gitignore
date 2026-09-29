@@ -1,0 +1,51 @@
+# ------------------------------------------------------------------- secrets
+# .env holds DISCORD_TOKEN and HF_TOKEN. Never commit it.
+.env
+.env.*
+!.env.example
+
+# -------------------------------------------------------------------- voices
+# Biometric data. They stay on your machine only.
+voices/
+*.safetensors
+
+# ------------------------------------------------------ audio: source, work, output
+samples/
+outputs/
+work/
+*.wav
+*.flac
+*.ogg
+*.oga
+*.opus
+*.m4a
+*.aac
+*.mp3
+*.webm
+*.mp4
+*.aupzip
+*.zip
+
+# ------------------------------------------------------------ analysis output
+spec.png
+
+# ------------------------------------------------------------------- history
+# Who said what on Discord. It's the server members' data, keep it local.
+logs/
+history.csv
+
+# Names of the voices you hid. Same reason: they're people's names.
+panel/hidden.json
+
+# -------------------------------------------------------------------- python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+
+# --------------------------------------------------------------- environment
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini
